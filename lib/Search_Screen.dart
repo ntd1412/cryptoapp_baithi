@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cryptoapp_baithi/Chart_Screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_button/flutter_animated_button.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -8,11 +9,13 @@ class SearchScreen extends StatefulWidget {
   final double currentPrice;
   final String id;
 
-  const SearchScreen({Key? key, required this.currentPrice, required this.id}) : super(key: key);
+  const SearchScreen({Key? key, required this.currentPrice, required this.id})
+      : super(key: key);
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
+
 class _SearchScreenState extends State<SearchScreen> {
   List<dynamic> cryptoData = [];
   List<dynamic> cryptoData1 = [];
@@ -32,19 +35,23 @@ class _SearchScreenState extends State<SearchScreen> {
     _searchController.dispose(); // Dispose of the controller
     super.dispose();
   }
+
   Future<void> fetchCryptoData(String query1, String query2) async {
     try {
-      final response1 = await http.get(Uri.parse('https://api.coingecko.com/api/v3/search?query=$query1'));
+      final response1 = await http.get(
+          Uri.parse('https://api.coingecko.com/api/v3/search?query=$query1'));
 
       if (response1.statusCode == 200) {
         final responseData1 = json.decode(response1.body);
-        if (responseData1['coins'] != null && responseData1['coins'].isNotEmpty) {
+        if (responseData1['coins'] != null &&
+            responseData1['coins'].isNotEmpty) {
           final List<dynamic> data = responseData1['coins'];
           setState(() {
             cryptoData = data;
           });
           final id = responseData1['coins'][0]['id'];
-          final response2 = await http.get(Uri.parse('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=$id&order=market_cap_desc&per_page=20&page=1&sparkline=false'));
+          final response2 = await http.get(Uri.parse(
+              'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=$id&order=market_cap_desc&per_page=20&page=1&sparkline=false'));
           if (response2.statusCode == 200) {
             final responseData2 = json.decode(response2.body);
             if (responseData2 is List && responseData2.isNotEmpty) {
@@ -69,6 +76,7 @@ class _SearchScreenState extends State<SearchScreen> {
       // Handle errors, show a message to the user, etc.
     }
   }
+
   void _onSearch() async {
     String query1 = _searchController.text;
 
@@ -120,9 +128,20 @@ class _SearchScreenState extends State<SearchScreen> {
               style: TextStyle(color: Colors.white),
             ),
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _onSearch,
-              child: Text('Tìm kiếm'),
+            AnimatedButton(
+              height: 40,
+              width: 100,
+              text: 'Search',
+              isReverse: true,
+              selectedTextColor: Colors.black,
+              transitionType: TransitionType.LEFT_TO_RIGHT,
+              backgroundColor: Colors.transparent,
+              borderColor: Colors.white,
+              borderRadius: 30,
+              borderWidth: 2,
+              selectedGradientColor: LinearGradient(
+                  colors: [Colors.pinkAccent, Colors.orangeAccent]),
+              onPress: _onSearch,
             ),
             Expanded(
               child: ListView.builder(
@@ -136,7 +155,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       _onSearch1(crypto);
                     },
                     child: Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 8.0),
                       color: Color.fromRGBO(0, 0, 0, 0.6),
                       child: ListTile(
                         shape: RoundedRectangleBorder(
@@ -209,7 +229,4 @@ class _SearchScreenState extends State<SearchScreen> {
       print('Empty search query');
     }
   }
-
-
 }
-

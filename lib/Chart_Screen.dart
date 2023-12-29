@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'package:cryptoapp_baithi/widgets/toggle_button.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_button/flutter_animated_button.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:cryptoapp_baithi/widgets/sliver_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 class ChartScreen extends StatefulWidget {
   final String id;
   final String name;
@@ -20,13 +22,15 @@ class ChartScreen extends StatefulWidget {
     required this.currentPrice,
     required this.last_updated,
   });
+
   @override
   _ChartScreenState createState() => _ChartScreenState();
 }
 
 class _ChartScreenState extends State<ChartScreen> {
   List<List<num>> bitcoinPrices = [];
-  List<bool> _isSelected = [true,false,false,false];
+  List<bool> _isSelected = [true, false, false, false];
+
   @override
   void initState() {
     super.initState();
@@ -45,7 +49,8 @@ class _ChartScreenState extends State<ChartScreen> {
         final data = json.decode(response.body);
         setState(() {
           bitcoinPrices = List<List<double>>.from(data['prices'].map(
-                  (dynamicList) => List<double>.from(dynamicList.map((value) => value.toDouble()))));
+              (dynamicList) => List<double>.from(
+                  dynamicList.map((value) => value.toDouble()))));
         });
       } else {
         throw Exception('Bị chặn API');
@@ -54,7 +59,6 @@ class _ChartScreenState extends State<ChartScreen> {
       print('Error: $error');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +112,7 @@ class _ChartScreenState extends State<ChartScreen> {
               ),
               background: Image.asset(
                 "assets/images/chart.jpg",
-                fit:BoxFit.cover,
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -118,101 +122,156 @@ class _ChartScreenState extends State<ChartScreen> {
               minHeight: 360,
               maxHeight: 360,
               child: Padding(
-                padding: const EdgeInsets.only(top: 32),
-                child: Column(children: [
-                  Text(
-                    "\$" + widget.currentPrice.toStringAsFixed(2),
-                    style: GoogleFonts.roboto(
-                      textStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    "${DateFormat('dd/MM/yyyy HH:mm').format(widget.last_updated.toLocal())}",
-                    style: GoogleFonts.roboto(
-                      textStyle: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: LineChart(
-                        LineChartData(
-                          gridData: FlGridData(show: false),
-                          titlesData: FlTitlesData(show: false),
-                          borderData: FlBorderData(
-                            show: true,
-                            border: Border.all(color: const Color(0xff37434d), width: 1),
-                          ),
-                          minY: bitcoinPrices.isNotEmpty
-                              ? bitcoinPrices.map((e) => e[1]).reduce((a, b) => a < b ? a : b).toDouble()
-                              : 0.0,
-                          maxY: bitcoinPrices.isNotEmpty
-                              ? bitcoinPrices.map((e) => e[1]).reduce((a, b) => a > b ? a : b).toDouble()
-                              : 0.0,
-                          lineBarsData: [
-                            LineChartBarData(
-                              spots: List.generate(
-                                bitcoinPrices.length,
-                                    (index) => FlSpot(
-                                  index.toDouble(),
-                                  bitcoinPrices[index][1].toDouble(),
-                                ),
-                              ),
-                              isCurved: true,
-                              curveSmoothness: 0.2,
-                              colors: [Colors.blue],
-                              dotData: FlDotData(show: false),
-                              belowBarData: BarAreaData(show: false),
-                            ),
-                          ],
+                padding: const EdgeInsets.only(top: 16),
+                child: Column(
+                  children: [
+                    Text(
+                      "\$" + widget.currentPrice.toStringAsFixed(2),
+                      style: GoogleFonts.roboto(
+                        textStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
                         ),
                       ),
-
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  ToggleButtons(
-                    borderRadius: BorderRadius.circular(8),
-                    borderColor: Colors.indigoAccent,
-                    color: Colors.white,
-                    fillColor: Colors.green,
-                    selectedBorderColor: Colors.indigoAccent,
-                    selectedColor: Colors.white,
-                    children: [
-                      ToggleButton(name :"Today"),
-                      ToggleButton(name :"3D"),
-                      ToggleButton(name :"7D"),
-                      ToggleButton(name :"30D"),
-                    ], isSelected: _isSelected,
-                    onPressed: (index) {
-                      setState(() {
-                        for (int buttonIndex = 0; buttonIndex < _isSelected.length; buttonIndex++) {
-                          if (buttonIndex == index) {
-                            _isSelected[buttonIndex] = true;
-                            fetchData(widget.id, getTimeRangeByIndex(index));
-                          } else {
-                            _isSelected[buttonIndex] = false;
+                    Text(
+                      "${DateFormat('dd/MM/yyyy HH:mm').format(widget.last_updated.toLocal())}",
+                      style: GoogleFonts.roboto(
+                        textStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: LineChart(
+                          LineChartData(
+                            gridData: FlGridData(show: false),
+                            titlesData: FlTitlesData(show: false),
+                            borderData: FlBorderData(
+                              show: true,
+                              border: Border.all(
+                                  color: const Color(0xff37434d), width: 1),
+                            ),
+                            minY: bitcoinPrices.isNotEmpty
+                                ? bitcoinPrices
+                                    .map((e) => e[1])
+                                    .reduce((a, b) => a < b ? a : b)
+                                    .toDouble()
+                                : 0.0,
+                            maxY: bitcoinPrices.isNotEmpty
+                                ? bitcoinPrices
+                                    .map((e) => e[1])
+                                    .reduce((a, b) => a > b ? a : b)
+                                    .toDouble()
+                                : 0.0,
+                            lineBarsData: [
+                              LineChartBarData(
+                                spots: List.generate(
+                                  bitcoinPrices.length,
+                                  (index) => FlSpot(
+                                    index.toDouble(),
+                                    bitcoinPrices[index][1].toDouble(),
+                                  ),
+                                ),
+                                isCurved: true,
+                                curveSmoothness: 0.2,
+                                colors: [Colors.blue],
+                                dotData: FlDotData(show: false),
+                                belowBarData: BarAreaData(show: false),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    ToggleButtons(
+                      borderRadius: BorderRadius.circular(8),
+                      borderColor: Colors.indigoAccent,
+                      color: Colors.white,
+                      fillColor: Colors.green,
+                      selectedBorderColor: Colors.indigoAccent,
+                      selectedColor: Colors.white,
+                      children: [
+                        ToggleButton(name: "Today"),
+                        ToggleButton(name: "3D"),
+                        ToggleButton(name: "7D"),
+                        ToggleButton(name: "30D"),
+                      ],
+                      isSelected: _isSelected,
+                      onPressed: (index) {
+                        setState(() {
+                          for (int buttonIndex = 0;
+                              buttonIndex < _isSelected.length;
+                              buttonIndex++) {
+                            if (buttonIndex == index) {
+                              _isSelected[buttonIndex] = true;
+                              fetchData(widget.id, getTimeRangeByIndex(index));
+                            } else {
+                              _isSelected[buttonIndex] = false;
+                            }
                           }
-                        }
-                      });
-                    },
-                  ),
-                ],
+                        });
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),
-          )
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              height: 180,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  AnimatedButton(
+                    height: 40,
+                    width: 100,
+                    text: 'Buy',
+                    isReverse: true,
+                    selectedTextColor: Colors.black,
+                    transitionType: TransitionType.LEFT_TO_RIGHT,
+                    backgroundColor: Colors.transparent,
+                    borderColor: Colors.white,
+                    borderRadius: 30,
+                    borderWidth: 2,
+                    selectedGradientColor: LinearGradient(
+                        colors: [Colors.pinkAccent, Colors.orangeAccent]),
+                    onPress: () {
+                      print('Buy');
+                    },
+                  ),
+                  AnimatedButton(
+                    height: 40,
+                    width: 100,
+                    text: 'Sell',
+                    isReverse: true,
+                    selectedTextColor: Colors.black,
+                    transitionType: TransitionType.LEFT_TO_RIGHT,
+                    backgroundColor: Colors.transparent,
+                    borderColor: Colors.white,
+                    borderRadius: 30,
+                    borderWidth: 2,
+                    selectedGradientColor: LinearGradient(
+                        colors: [Colors.pinkAccent, Colors.orangeAccent]),
+                    onPress: () {
+                      print('Sell');
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 }
+
 String getTimeRangeByIndex(int index) {
   switch (index) {
     case 1:
@@ -225,4 +284,3 @@ String getTimeRangeByIndex(int index) {
       return '1';
   }
 }
-

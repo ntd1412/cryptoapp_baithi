@@ -19,14 +19,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Color.fromRGBO(11, 12, 54, 1),
       appBar: AppBar(
-        leading: Icon(Icons.menu),
+        backgroundColor: Color.fromRGBO(11, 12, 54, 1),
+        leading: Icon(
+          Icons.menu,
+          color: Colors.white,
+        ),
       ),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 10),
         children: <Widget>[
           ListTile(
             leading: CircleAvatar(
-              backgroundImage: AssetImage("assets/cm${random.nextInt(10)}.jpeg"),
+              backgroundImage:
+                  AssetImage("assets/cm${random.nextInt(10)}.jpeg"),
               radius: 25,
             ),
             title: Text(
@@ -54,13 +59,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     isScrollable: false,
                     tabs: <Widget>[
                       Tab(
-                        text: "Wallets",
+                        child: Text(
+                          "Wallets",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                       Tab(
-                        text: "Transactions",
+                        child: Text(
+                          "Transactions",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                       Tab(
-                        text: "Buy/Sell",
+                        child: Text(
+                          "Buy/Sell",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -90,7 +110,6 @@ class PlaceholderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text("Buy/Sell Content"),
-
     );
   }
 }

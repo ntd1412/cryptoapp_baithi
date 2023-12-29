@@ -11,11 +11,13 @@ class CryptoScreen extends StatefulWidget {
   @override
   _CryptoScreenState createState() => _CryptoScreenState();
 }
+
 class _CryptoScreenState extends State<CryptoScreen> {
   List<dynamic> cryptoData = [];
   bool sortByPriceAscending = true;
   bool sortBy24hPercentageAscending = true;
   bool sortByMarketCapAscending = true;
+
   String formatMarketCap(int marketCap) {
     const int trillion = 1000000000000;
     const int billion = 1000000000;
@@ -31,6 +33,7 @@ class _CryptoScreenState extends State<CryptoScreen> {
       return marketCap.toString();
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -41,10 +44,10 @@ class _CryptoScreenState extends State<CryptoScreen> {
   void dispose() {
     super.dispose();
   }
+
   Future<void> fetchCryptoData() async {
     final response = await http.get(Uri.parse(
         'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false'));
-
     if (response.statusCode == 200) {
       setState(() {
         cryptoData = json.decode(response.body);
@@ -91,10 +94,13 @@ class _CryptoScreenState extends State<CryptoScreen> {
                 onTap: () {
                   setState(() {
                     sortByPriceAscending = !sortByPriceAscending;
-                    cryptoData.sort((a, b) =>
-                    sortByPriceAscending
-                        ? a['current_price'].toDouble().compareTo(b['current_price'].toDouble())
-                        : b['current_price'].toDouble().compareTo(a['current_price'].toDouble()));
+                    cryptoData.sort((a, b) => sortByPriceAscending
+                        ? a['current_price']
+                            .toDouble()
+                            .compareTo(b['current_price'].toDouble())
+                        : b['current_price']
+                            .toDouble()
+                            .compareTo(a['current_price'].toDouble()));
                   });
                 },
                 child: Padding(
@@ -113,10 +119,13 @@ class _CryptoScreenState extends State<CryptoScreen> {
                 onTap: () {
                   setState(() {
                     sortByMarketCapAscending = !sortByMarketCapAscending;
-                    cryptoData.sort((a, b) =>
-                    sortByMarketCapAscending
-                        ? a['market_cap'].toDouble().compareTo(b['market_cap'].toDouble())
-                        : b['market_cap'].toDouble().compareTo(a['market_cap'].toDouble()));
+                    cryptoData.sort((a, b) => sortByMarketCapAscending
+                        ? a['market_cap']
+                            .toDouble()
+                            .compareTo(b['market_cap'].toDouble())
+                        : b['market_cap']
+                            .toDouble()
+                            .compareTo(a['market_cap'].toDouble()));
                   });
                 },
                 child: Padding(
@@ -134,11 +143,13 @@ class _CryptoScreenState extends State<CryptoScreen> {
               GestureDetector(
                 onTap: () {
                   setState(() {
-                    sortBy24hPercentageAscending = !sortBy24hPercentageAscending;
-                    cryptoData.sort((a, b) =>
-                    sortBy24hPercentageAscending
-                        ? a['price_change_percentage_24h'].toDouble().compareTo(b['price_change_percentage_24h'].toDouble())
-                        : b['price_change_percentage_24h'].toDouble().compareTo(a['price_change_percentage_24h'].toDouble()));
+                    sortBy24hPercentageAscending =
+                        !sortBy24hPercentageAscending;
+                    cryptoData.sort((a, b) => sortBy24hPercentageAscending
+                        ? a['price_change_percentage_24h'].toDouble().compareTo(
+                            b['price_change_percentage_24h'].toDouble())
+                        : b['price_change_percentage_24h'].toDouble().compareTo(
+                            a['price_change_percentage_24h'].toDouble()));
                   });
                 },
                 child: Padding(
@@ -162,7 +173,8 @@ class _CryptoScreenState extends State<CryptoScreen> {
                 final symbol = crypto['symbol'];
                 final name = crypto['name'];
                 final id = crypto['id'];
-                final price_change_percentage_24h = crypto['price_change_percentage_24h'].toDouble();
+                final price_change_percentage_24h =
+                    crypto['price_change_percentage_24h'].toDouble();
                 final image = crypto['image'];
                 final currentPrice = crypto['current_price'];
                 final last_updated = crypto['last_updated'];
@@ -186,7 +198,8 @@ class _CryptoScreenState extends State<CryptoScreen> {
                   child: Container(
                     height: 95.0,
                     child: Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 8.0),
                       color: Color.fromRGBO(0, 0, 0, 0.6),
                       child: ListTile(
                         shape: RoundedRectangleBorder(
@@ -206,21 +219,27 @@ class _CryptoScreenState extends State<CryptoScreen> {
                               children: [
                                 Text(
                                   '${symbol.toUpperCase()}',
-                                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white),
+                                  style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
                                 ),
                                 Text(
                                   "\$${currentPrice.toStringAsFixed(2)}",
-                                  style: TextStyle(fontSize: 16.0, color: Colors.white),
+                                  style: TextStyle(
+                                      fontSize: 16.0, color: Colors.white),
                                 ),
                               ],
                             ),
                             Column(
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(top: 16.0,right: 64),
+                                  padding:
+                                      EdgeInsets.only(top: 16.0, right: 64),
                                   child: Text(
                                     "\$${formattedMarketCap}",
-                                    style: TextStyle(fontSize: 16.0, color: Colors.white),
+                                    style: TextStyle(
+                                        fontSize: 16.0, color: Colors.white),
                                   ),
                                 ),
                               ],
@@ -231,7 +250,9 @@ class _CryptoScreenState extends State<CryptoScreen> {
                           padding: EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0),
-                            color: price_change_percentage_24h >= 0 ? Colors.green : Colors.red,
+                            color: price_change_percentage_24h >= 0
+                                ? Colors.green
+                                : Colors.red,
                           ),
                           child: Text(
                             "${price_change_percentage_24h.toStringAsFixed(2)}%",
@@ -244,7 +265,6 @@ class _CryptoScreenState extends State<CryptoScreen> {
                       ),
                     ),
                   ),
-
                 );
               },
             ),

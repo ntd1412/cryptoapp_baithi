@@ -66,14 +66,15 @@ class _walletsState extends State<wallets> {
                 ],
               ),
             ),
-            for (var transaction in data)
-              ListTile(
-                title: Text(transaction["name"]),
-                subtitle: Text("${transaction["type"]} - ${transaction["amount"]}"),
-                leading: CircleAvatar(
-                  backgroundImage: AssetImage(transaction["dp"]),
-                ),
-              ),
+            // for (var transaction in data)
+            //   ListTile(
+            //     title: Text(transaction["name"]),
+            //     subtitle:
+            //         Text("${transaction["type"]} - ${transaction["amount"]}"),
+            //     leading: CircleAvatar(
+            //       backgroundImage: AssetImage(transaction["dp"]),
+            //     ),
+            //   ),
           ],
         ),
       ),
